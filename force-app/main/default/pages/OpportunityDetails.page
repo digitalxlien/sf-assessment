@@ -1,0 +1,38 @@
+<apex:page standardController="Opportunity" renderAs="PDF" showHeader="false" sidebar="false" standardStylesheets="false"
+    applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <apex:stylesheet value="{!$Resource.OpportunityDetails}" />
+        <title>Detalles de oportunidad</title>
+        <style>
+            @page {
+                margin: 0.25in;
+                size: 8.5in 11in;
+            }
+        </style>
+    </head>
+
+    <body>
+        <apex:image url="{!$Resource.atosLogo}" width="200px" />
+        <h2>
+            Detalles de oportunidad: &nbsp;
+            <apex:outputText value="{!opportunity.Name}" />
+        </h2>
+        <apex:panelGrid columns="2" width="100%" rowClasses="row1, row2" cellpadding="5px">
+            <apex:outputText value="Nombre" />
+            <apex:outputText value="{!opportunity.Name}" />
+            <apex:outputText value="Cuenta" />
+            <apex:outputText value="{!opportunity.Account.Name}" />
+            <apex:outputText value="Monto" />
+            <apex:outputText value="{!opportunity.Amount}" />
+            <apex:outputText value="Fecha de cierre" />
+            <apex:outputText value="{0, date, d' - ' MMMM ' - ' yyyy}">
+                <apex:param value="{!opportunity.CloseDate}" />
+            </apex:outputText>
+            <apex:outputText value="Etapa" />
+            <apex:outputText value="{!opportunity.StageName}" />
+            <apex:outputText value="Tipo" />
+            <apex:outputText value="{!opportunity.type}" />
+        </apex:panelGrid>
+    </body>
+</apex:page>

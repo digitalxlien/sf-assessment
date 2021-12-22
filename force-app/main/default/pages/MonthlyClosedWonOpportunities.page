@@ -1,0 +1,35 @@
+<apex:page controller="MonthlyClosedWonOpportunitiesController" contentType="{!renderAsExcel}" cache="true">
+    <style>
+        .customBlockSection {
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 10px;
+        }
+    </style>
+    <div class="customBlockSection">
+        <apex:form rendered="{!renderedInExcel}">
+            <Apex:pageBlock Title="Acciones">
+                <Apex:commandButton value="Export as Excel" action="{!saveAsExcel}" rendered="{!renderedInExcel}" />
+            </Apex:pageBlock>
+        </apex:form>
+    </div>
+    <div class="customBlockSection">
+        <apex:pageBlock title="Oportunidades mensuales cerradas ganadas de {!
+currentMonthName}">
+            <apex:pageBlockSection>
+                <apex:pageBlockTable value="{! opportunities }" var="opp">
+                    <apex:column>
+                        <apex:facet name="header">Name</apex:facet>
+                        <apex:outputLink value="/apex/OpportunityDetails?id={!opp.Id}" target="_blank">{! opp.Name}
+                        </apex:outputLink>
+                    </apex:column>
+                    <apex:column value="{! opp.Account.Name}" />
+                    <apex:column value="{! opp.Amount }" />
+                    <apex:column value="{! opp.CloseDate }" />
+                    <apex:column value="{! opp.StageName }" />
+                    <apex:column value="{! opp.Type }" />
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </div>
+</apex:page>

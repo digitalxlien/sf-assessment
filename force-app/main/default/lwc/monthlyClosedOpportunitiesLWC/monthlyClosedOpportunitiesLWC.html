@@ -1,0 +1,17 @@
+<template>
+    <template if:true={bodyCard.visible}>
+        <lightning-card title="Oportunidades">
+            <div class="slds-card__body slds-card__body_inner">
+                <div style="height:4rem">
+                    <div class=" slds-is-relative">
+                        <p class="slds-text-heading_small">Listado de oportunidades cerradas perdidas y cerradas ganadas del mes actual para esta cuenta:</p>
+                    </div>
+                </div>
+                <div class="slds-m-bottom_medium" style="margin-top:5px;">
+                    <lightning-datatable key-field="Id" data={table.items} columns={table.columns}>
+                    </lightning-datatable>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+</template>

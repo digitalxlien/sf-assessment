@@ -2,21 +2,22 @@ public class CreditCardWebservice {
     
 
 
-    public static void validateCreditCardWithExternalService(List<Id> creditCardIds){
+    @future (callout=true)
+    public static void validateCreditCardWithExternalService(Set<Id> creditCardIds){
 
         List<CreditCard__c> creditCards = [SELECT Id, Number__c, CreatedDate, contact__r.FirstName, contact__r.LastName, contact__r.email, contact__r.ProgramType__c, ValidatedExternalSystem__c FROM CreditCard__c where Id IN : creditCardIds ];
         Map<String, CreditCard__c> creditCardsByNumber = new Map<String, CreditCard__c>();
 
         // Request
-        List<CreditCardWrapper> creditCardWrappers = new List<CreditCardWrapper>();
+        List<CreditCardWrapper> creditCardsResquest = new List<CreditCardWrapper>();
         
         // Response
-        ResponseWrapper responseWrapper;
+        List<ValidatedCreditCard> validatedCreditCards;
         
 
         for(creditCard__c cd : creditCards){
 
-            creditCardWrappers.add(new creditCardWrapper(
+            creditCardsResquest.add(new creditCardWrapper(
                 cd.Number__c,
                 CreditCardWebservice.formatDate(cd.CreatedDate),
                 cd.contact__r.FirstName + cd.contact__r.LastName,
@@ -28,28 +29,36 @@ public class CreditCardWebservice {
             creditCardsByNumber.put(cd.Number__c, cd);
         }
 
+        System.debug('creditCardsByNumber -->');
+        System.debug(JSON.serialize(creditCardsByNumber));
 
 
-        if( ! creditCardWrappers.isEmpty() ){
+        if( ! creditCardsResquest.isEmpty() ){
             
             Http caller = new Http();
             HttpRequest req = new HttpRequest();
             Integer StatusCode;
 
-            req.setEndpoint('https://sf-assessment.free.beeceptor.com');
+            req.setEndpoint('https://sf-assessment.free.beeceptor.com/');
             req.setMethod('POST');
             req.setHeader('Content-Type', 'application/json');
-            req.setBody( JSON.serialize(new RequestWrapper( creditCardWrappers ) ) );
+            //req.setBody( JSON.serialize(new RequestWrapper( creditCardsResquest ) ) );
+            req.setBody( JSON.serialize( creditCardsResquest) );
 
             HttpResponse res = caller.send(req);
             
+            System.debug('Request made.');
+
             statusCode = res.getStatusCode();
             
             if(statusCode == 201){
                 
-                responseWrapper = (ResponseWrapper) JSON.deserialize( res.getBody(), ResponseWrapper.class );
-           
-                for (ValidatedCreditCard validatedCreditCard : responseWrapper.validatedCreditCards) {
+                validatedCreditCards = ( List<ValidatedCreditCard> ) JSON.deserialize( res.getBody(),  List<ValidatedCreditCard>.class );
+            
+                System.debug(res.getBody() + '');
+                System.debug('Response --> ');
+                System.debug(JSON.serialize(validatedCreditCards));
+                for (ValidatedCreditCard validatedCreditCard : validatedCreditCards) {
                     creditCardsByNumber.get(validatedCreditCard.creditCardNumber ).ValidatedExternalSystem__c = validatedCreditCard.validated;
                 }
 
@@ -61,6 +70,7 @@ public class CreditCardWebservice {
 
         }
 
+
     }
 
     public static String formatDate(Datetime dateToCovert){
@@ -71,14 +81,13 @@ public class CreditCardWebservice {
         return dateFormated;
     }
 
-
+    /*
     public class RequestWrapper{
-        List<CreditCardWrapper> CreditCardWrappers = new List<CreditCardWrapper>();
+        List<CreditCardWrapper> creditCardsResquest = new List<CreditCardWrapper>();
         
-        public RequestWrapper(List<CreditCardWrapper> CreditCardWrappers ){
-            this.CreditCardWrappers = CreditCardWrappers;
+        public RequestWrapper(List<CreditCardWrapper> creditCardsResquest ){
+            this.creditCardsResquest = creditCardsResquest;
         }
-
     }
 
 
@@ -92,7 +101,7 @@ public class CreditCardWebservice {
         }
 
     }
-
+    */
 
     public class CreditCardWrapper {
 
@@ -116,11 +125,5 @@ public class CreditCardWebservice {
         String creditCardNumber;
         Boolean validated;
     }
-
-
-
-
-
-
 
 }

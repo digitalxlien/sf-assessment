@@ -54,6 +54,7 @@ trigger Account on Account (before insert, before update) {
 
                 if( ! cases.isEmpty() ){
                     insert cases;
+                    system.debug('Cases inserted');
                 }
 
             }

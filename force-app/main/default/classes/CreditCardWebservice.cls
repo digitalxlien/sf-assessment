@@ -122,8 +122,8 @@ public class CreditCardWebservice {
     }
 
     public class ValidatedCreditCard {
-        String creditCardNumber;
-        Boolean validated;
+        public String creditCardNumber;
+        public Boolean validated;
     }
 
 }

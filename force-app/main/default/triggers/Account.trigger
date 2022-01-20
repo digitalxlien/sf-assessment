@@ -33,18 +33,21 @@ trigger Account on Account (before insert, before update) {
                     contactIds.add( contact.Id );
                     
                     // Creacion de cases para los contactos afectados cuando son premium
-                    if( contact.programType__c.equalsIgnoreCase( 'Premium') ){
-                        cases.add (
-                            new Case(
-                                Status = 'New',
-                                ContactId = contact.id,
-                                AccountId = contact.accountId,
-                                Subject = 'Canceled Account',
-                                Description = 'account that has been canceled with associated premium contacts',
-                                Origin = 'Web'
-                            )
-                        );
+                    if( String.isNotBlank(contact.programType__c)) {
+                        if( contact.programType__c.equalsIgnoreCase( 'Premium') ){
+                            cases.add (
+                                new Case(
+                                    Status = 'New',
+                                    ContactId = contact.id,
+                                    AccountId = contact.accountId,
+                                    Subject = 'Canceled Account',
+                                    Description = 'account that has been canceled with associated premium contacts',
+                                    Origin = 'Web'
+                                )
+                            );
+                        }
                     }
+                    
 
                     contact.ProgramType__c = 'Canceled';
 
